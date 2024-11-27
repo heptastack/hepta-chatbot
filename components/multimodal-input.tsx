@@ -22,7 +22,7 @@ import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 
 import { sanitizeUIMessages } from '@/lib/utils';
 
-import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
+import { ArrowUpIcon, StopIcon } from './icons';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 
@@ -224,7 +224,6 @@ export function MultimodalInput({
         variant="outline"
         disabled={isLoading}
       >
-        <PaperclipIcon size={14} />
       </Button>
     </div>
   );
