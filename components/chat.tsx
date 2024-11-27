@@ -135,7 +135,6 @@ export function Chat({
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             stop={stop}
-
             append={append}
             block={block}
             setBlock={setBlock}
