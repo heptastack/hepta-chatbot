@@ -1,5 +1,4 @@
 import type {
-  Attachment,
   ChatRequestOptions,
   CreateMessage,
   Message,
@@ -57,8 +56,6 @@ export function Block({
   handleSubmit,
   isLoading,
   stop,
-  attachments,
-  setAttachments,
   append,
   block,
   setBlock,
@@ -71,8 +68,6 @@ export function Block({
   setInput: (input: string) => void;
   isLoading: boolean;
   stop: () => void;
-  attachments: Array<Attachment>;
-  setAttachments: Dispatch<SetStateAction<Array<Attachment>>>;
   block: UIBlock;
   setBlock: Dispatch<SetStateAction<UIBlock>>;
   messages: Array<Message>;
@@ -324,8 +319,6 @@ export function Block({
                 handleSubmit={handleSubmit}
                 isLoading={isLoading}
                 stop={stop}
-                attachments={attachments}
-                setAttachments={setAttachments}
                 messages={messages}
                 append={append}
                 className="bg-background dark:bg-muted"

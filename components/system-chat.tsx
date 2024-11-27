@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
@@ -98,7 +100,7 @@ export function InteractiveSystemChat({
 
   return (
     <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-      {messages.map((message) => (
+      {messages.map((message, index) => (
         <div key={message.id} className="flex flex-col gap-2 bg-muted p-4 rounded-xl">
           <div className="flex items-center gap-2 text-muted-foreground">
             <SparklesIcon size={16} />
@@ -110,7 +112,7 @@ export function InteractiveSystemChat({
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               {message.options.map((option) => (
                 <Button
-                  key={option.id} // Use option.id as the key
+                  key={option.id}
                   variant="outline"
                   onClick={() => handleOptionSelect(message.id, option.value)}
                   disabled={isLoading}

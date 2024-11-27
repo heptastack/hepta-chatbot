@@ -12,7 +12,6 @@ import { DocumentToolCall, DocumentToolResult } from './document';
 import { SparklesIcon } from './icons';
 import { Markdown } from './markdown';
 import { MessageActions } from './message-actions';
-import { PreviewAttachment } from './preview-attachment';
 import { Weather } from './weather';
 
 export const PreviewMessage = ({
@@ -128,16 +127,7 @@ export const PreviewMessage = ({
             </div>
           )}
 
-          {message.experimental_attachments && (
-            <div className="flex flex-row gap-2">
-              {message.experimental_attachments.map((attachment) => (
-                <PreviewAttachment
-                  key={attachment.url}
-                  attachment={attachment}
-                />
-              ))}
-            </div>
-          )}
+
 
           <MessageActions
             key={`action-${message.id}`}

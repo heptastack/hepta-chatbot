@@ -1,7 +1,7 @@
 import type { SetStateAction } from 'react';
 
 import type { UIBlock } from './block';
-import { FileIcon, LoaderIcon, MessageIcon, PencilEditIcon } from './icons';
+import { LoaderIcon, MessageIcon, PencilEditIcon } from './icons';
 
 const getActionText = (
   type: 'create' | 'update' | 'request-suggestions',
@@ -57,14 +57,13 @@ export function DocumentToolResult({
         });
       }}
     >
-      <div className="text-muted-foreground mt-1">
-        {type === 'create' ? (
-          <FileIcon />
-        ) : type === 'update' ? (
+      <div className="text-muted-foreground mt-1">        
+        {type === 'update' ? (
           <PencilEditIcon />
         ) : type === 'request-suggestions' ? (
           <MessageIcon />
         ) : null}
+
       </div>
       <div className="text-left">
         {`${getActionText(type, 'past')} "${result.title}"`}
@@ -106,22 +105,13 @@ export function DocumentToolCall({
       }}
     >
       <div className="flex flex-row gap-3 items-start">
-        <div className="text-zinc-500 mt-1">
-          {type === 'create' ? (
-            <FileIcon />
-          ) : type === 'update' ? (
-            <PencilEditIcon />
-          ) : type === 'request-suggestions' ? (
-            <MessageIcon />
-          ) : null}
-        </div>
 
         <div className="text-left">
           {`${getActionText(type, 'present')} ${args.title ? `"${args.title}"` : ''}`}
         </div>
       </div>
 
-      <div className="animate-spin mt-1">{<LoaderIcon />}</div>
+      <div className="animate-spin mt-1"><LoaderIcon /></div>
     </button>
   );
 }

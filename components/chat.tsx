@@ -1,6 +1,6 @@
 'use client';
 
-import type { Attachment, Message } from 'ai';
+import type { Message } from 'ai';
 import { useChat } from 'ai/react';
 import { AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
@@ -72,7 +72,6 @@ export function Chat({
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   return (
     <>
@@ -119,8 +118,7 @@ export function Chat({
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             stop={stop}
-            attachments={attachments}
-            setAttachments={setAttachments}
+
             messages={messages}
             setMessages={setMessages}
             append={append}
@@ -137,8 +135,7 @@ export function Chat({
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             stop={stop}
-            attachments={attachments}
-            setAttachments={setAttachments}
+
             append={append}
             block={block}
             setBlock={setBlock}
