@@ -16,7 +16,7 @@ import {
   useState,
 } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
-import { nanoid } from 'nanoid';
+
 import {
   Tooltip,
   TooltipContent,
@@ -146,8 +146,6 @@ const Tool = ({
     </Tooltip>
   );
 };
-
-const randomArr = [...Array(6)].map((x) => nanoid(5));
 
 const ReadingLevelSelector = ({
   setSelectedTool,
