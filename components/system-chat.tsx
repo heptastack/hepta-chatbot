@@ -1,7 +1,6 @@
-'use client';
-
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 
 import { Button } from '@/components/ui/button';
 import { SparklesIcon } from '@/components/icons';
@@ -16,6 +15,19 @@ type SystemMessage = {
   }>;
 };
 
+const fetcher = async (url: string, body: any) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch next step');
+  }
+
+  return response.json();
+};
+
 export function InteractiveSystemChat({
   initialMessage,
   onComplete,
@@ -28,46 +40,49 @@ export function InteractiveSystemChat({
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchNextStep = useCallback(async (previousStepId?: string) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/system-chat/respond', {
-        method: 'POST',
-        body: JSON.stringify({
+  const { data, error, mutate } = useSWR(
+    '/api/system-chat/respond',
+    (url) => fetcher(url, { initialMessage, selectedOptions: null })
+  );
+
+  const fetchNextStep = useCallback(
+    async (previousStepId?: string) => {
+      setIsLoading(true);
+      try {
+        const body = {
           previousStepId,
-          selectedOption: previousStepId ? selectedOptions[previousStepId] : null,
+          selectedOptions: previousStepId ? selectedOptions[previousStepId] : null,
           initialMessage,
-        }),
-      });
+        };
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch next step');
+        const nextStep = await mutate(body, { revalidate: false });
+        if (nextStep) {
+          setMessages((prev) => [...prev, nextStep]);
+          setCurrentStep((prev) => prev + 1);
+        } else if (onComplete) {
+          onComplete(selectedOptions);
+        }
+      } catch (error) {
+        toast.error('Error in workflow', {
+          description: error instanceof Error ? error.message : 'Unknown error',
+        });
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [initialMessage, onComplete, selectedOptions, mutate]
+  );
 
-      const nextStep: SystemMessage = await response.json();
-
-      if (nextStep) {
-        setMessages((prev) => [...prev, nextStep]);
-        setCurrentStep((prev) => prev + 1);
-      } else if (onComplete) {
-        onComplete(selectedOptions);
-      }
-    } catch (error) {
-      toast.error('Error in workflow', {
-        description: error instanceof Error ? error.message : 'Unknown error',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [initialMessage, onComplete, selectedOptions]);
-
-  const handleOptionSelect = useCallback((stepId: string, optionValue: string) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [stepId]: optionValue,
-    }));
-    fetchNextStep(stepId);
-  }, [fetchNextStep]);
+  const handleOptionSelect = useCallback(
+    (stepId: string, optionValue: string) => {
+      setSelectedOptions((prev) => ({
+        ...prev,
+        [stepId]: optionValue,
+      }));
+      fetchNextStep(stepId);
+    },
+    [fetchNextStep]
+  );
 
   useEffect(() => {
     if (!messages.length) {
@@ -75,24 +90,27 @@ export function InteractiveSystemChat({
     }
   }, [fetchNextStep, messages.length]);
 
+  if (error) {
+    toast.error('Error in workflow', {
+      description: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+
   return (
     <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-      {messages.map((message, index) => (
-        <div 
-          key={message.id} 
-          className="flex flex-col gap-2 bg-muted p-4 rounded-xl"
-        >
+      {messages.map((message) => (
+        <div key={message.id} className="flex flex-col gap-2 bg-muted p-4 rounded-xl">
           <div className="flex items-center gap-2 text-muted-foreground">
             <SparklesIcon size={16} />
             <span className="font-medium">Assistant</span>
           </div>
           <p>{message.text}</p>
-          
+
           {message.options && (
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               {message.options.map((option) => (
                 <Button
-                  key={option.id}
+                  key={option.id} // Use option.id as the key
                   variant="outline"
                   onClick={() => handleOptionSelect(message.id, option.value)}
                   disabled={isLoading}
